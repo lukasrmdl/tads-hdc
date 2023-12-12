@@ -1,2 +1,4 @@
-package br.edu.ifsul.academico.projetotadshdc.api.Infra.Security;public record LoginResponseDTO() {
+package br.edu.ifsul.academico.projetotadshdc.api.Infra.Security;
+
+public record LoginResponseDTO(String token){
 }

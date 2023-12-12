@@ -4,6 +4,7 @@ import br.edu.ifsul.academico.projetotadshdc.api.User.RegisterDTO;
 import br.edu.ifsul.academico.projetotadshdc.api.User.AuthenticationDTO;
 import br.edu.ifsul.academico.projetotadshdc.api.User.User;
 import br.edu.ifsul.academico.projetotadshdc.api.User.UserRepository;
+import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
@@ -29,12 +30,17 @@ public class AuthenticationController {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private TokenService tokenService;
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+        var token = tokenService.generateToken((User) auth.getPrincipal());
+
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/register")
