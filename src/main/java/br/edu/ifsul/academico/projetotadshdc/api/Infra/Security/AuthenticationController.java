@@ -4,6 +4,10 @@ import br.edu.ifsul.academico.projetotadshdc.api.User.RegisterDTO;
 import br.edu.ifsul.academico.projetotadshdc.api.User.AuthenticationDTO;
 import br.edu.ifsul.academico.projetotadshdc.api.User.User;
 import br.edu.ifsul.academico.projetotadshdc.api.User.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +26,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api")
+@SecurityRequirement(name = "BearerAuth")
 public class AuthenticationController {
 
     @Autowired
@@ -33,6 +38,7 @@ public class AuthenticationController {
     @Autowired
     private TokenService tokenService;
 
+    @Operation(summary = "Realizar login")
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
@@ -43,6 +49,11 @@ public class AuthenticationController {
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
+    @Operation(summary = "Registrar um novo usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Usuário registrado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Já existe um usuário com o mesmo login")
+    })
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO data, UriComponentsBuilder ucb){
         if(this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();
@@ -62,5 +73,4 @@ public class AuthenticationController {
 
         return ResponseEntity.created(locationOfNewUser).build();
     }
-
 }
