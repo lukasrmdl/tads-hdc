@@ -18,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 //Acessar-docs: http://localhost:8080/swagger-ui/index.html#/
 
+//get : http://localhost:8080/api/users
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
@@ -44,7 +46,7 @@ public class SecurityConfigurations {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers("/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/inimigo").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/users").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
